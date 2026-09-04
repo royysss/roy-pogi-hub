@@ -1,0 +1,206 @@
+-- Roy Pogi Delta Tool (Updated: Instant Steal Bypass Toggle, Rounded UI Styles, Auto Infinite Jump, Notif Auto-TP, Minimize Button)
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local FrameCorner = Instance.new("UICorner")
+local Title = Instance.new("TextLabel")
+local Speed60 = Instance.new("TextButton")
+local Speed60Corner = Instance.new("UICorner")
+local Speed100 = Instance.new("TextButton")
+local Speed100Corner = Instance.new("UICorner")
+local Speed150 = Instance.new("TextButton")
+local Speed150Corner = Instance.new("UICorner")
+local InstantStealBtn = Instance.new("TextButton")
+local InstantStealCorner = Instance.new("UICorner")
+local OneButtonTP = Instance.new("TextButton")
+local TPCorner = Instance.new("UICorner")
+local ClearBtn = Instance.new("TextButton")
+local ClearCorner = Instance.new("UICorner")
+local MinimizeBtn = Instance.new("TextButton")
+
+-- UI Setup
+ScreenGui.Parent = game:GetService("CoreGui") or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.Name = "RoyPogiHub"
+ScreenGui.ResetOnSpawn = false
+
+-- Panel Visuals
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Position = UDim2.new(0.1, 0, 0.2, 0)
+MainFrame.Size = UDim2.new(0, 180, 0, 280) -- Adjusted height to cleanly fit the new toggle
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+FrameCorner.CornerRadius = UDim.new(0, 12)
+FrameCorner.Parent = MainFrame
+
+-- Title Header
+Title.Parent = MainFrame
+Title.Text = "👑 ROY POGI"
+Title.Size = UDim2.new(1, 0, 0, 35)
+Title.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 16
+
+local TitleCorner = Instance.new("UICorner")
+TitleCorner.CornerRadius = UDim.new(0, 12)
+TitleCorner.Parent = Title
+
+-- FLOATING MINIMIZE BUTTON
+MinimizeBtn.Parent = ScreenGui
+MinimizeBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+MinimizeBtn.Position = UDim2.new(0.02, 0, 0.2, 0)
+MinimizeBtn.Size = UDim2.new(0, 40, 0, 40)
+MinimizeBtn.Text = "RP"
+MinimizeBtn.TextColor3 = Color3.fromRGB(255, 215, 0)
+MinimizeBtn.Font = Enum.Font.SourceSansBold
+MinimizeBtn.TextSize = 16
+MinimizeBtn.Active = true
+MinimizeBtn.Draggable = true
+
+local MinCorner = Instance.new("UICorner")
+MinCorner.CornerRadius = UDim.new(0, 20)
+MinCorner.Parent = MinimizeBtn
+
+local MenuOpen = true
+MinimizeBtn.MouseButton1Click:Connect(function()
+    MenuOpen = not MenuOpen
+    MainFrame.Visible = MenuOpen
+end)
+
+-- Values Setup
+_G.CurrentSpeed = 16
+_G.SavedLocation = nil
+local InstantStealActive = false
+
+local function setSpeed(value)
+    _G.CurrentSpeed = value
+    Speed60.BackgroundColor3 = (_G.CurrentSpeed == 60) and Color3.fromRGB(255, 165, 0) or Color3.fromRGB(55, 55, 55)
+    Speed100.BackgroundColor3 = (_G.CurrentSpeed == 100) and Color3.fromRGB(255, 165, 0) or Color3.fromRGB(55, 55, 55)
+    Speed150.BackgroundColor3 = (_G.CurrentSpeed == 150) and Color3.fromRGB(255, 165, 0) or Color3.fromRGB(55, 55, 55)
+    
+    pcall(function()
+        local player = game.Players.LocalPlayer
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.WalkSpeed = value
+        end
+    end)
+end
+
+-- UPDATED SPEED INSTANT TAP BUTTONS (60, 100, 150)
+Speed60.Parent = MainFrame; Speed60.Size = UDim2.new(0, 50, 0, 35); Speed60.Position = UDim2.new(0, 10, 0, 50); Speed60.Text = "60"; Speed60.TextColor3 = Color3.fromRGB(255,255,255); Speed60.Font = Enum.Font.SourceSansBold; Speed60.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+Speed60Corner.CornerRadius = UDim.new(0, 6); Speed60Corner.Parent = Speed60
+Speed60.MouseButton1Click:Connect(function() setSpeed(60) end)
+
+Speed100.Parent = MainFrame; Speed100.Size = UDim2.new(0, 50, 0, 35); Speed100.Position = UDim2.new(0, 65, 0, 50); Speed100.Text = "100"; Speed100.TextColor3 = Color3.fromRGB(255,255,255); Speed100.Font = Enum.Font.SourceSansBold; Speed100.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+Speed100Corner.CornerRadius = UDim.new(0, 6); Speed100Corner.Parent = Speed100
+Speed100.MouseButton1Click:Connect(function() setSpeed(100) end)
+
+Speed150.Parent = MainFrame; Speed150.Size = UDim2.new(0, 50, 0, 35); Speed150.Position = UDim2.new(0, 120, 0, 50); Speed150.Text = "150"; Speed150.TextColor3 = Color3.fromRGB(255,255,255); Speed150.Font = Enum.Font.SourceSansBold; Speed150.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+Speed150Corner.CornerRadius = UDim.new(0, 6); Speed150Corner.Parent = Speed150
+Speed150.MouseButton1Click:Connect(function() setSpeed(150) end)
+
+-- INSTANT STEAL BUTTON
+InstantStealBtn.Parent = MainFrame
+InstantStealBtn.Size = UDim2.new(0, 160, 0, 40)
+InstantStealBtn.Position = UDim2.new(0, 10, 0, 95)
+InstantStealBtn.BackgroundColor3 = Color3.fromRGB(150, 40, 40)
+InstantStealBtn.Text = "⚡ Instant Steal: OFF"
+InstantStealBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+InstantStealBtn.Font = Enum.Font.SourceSansBold
+InstantStealBtn.TextSize = 13
+
+InstantStealCorner.CornerRadius = UDim.new(0, 8)
+InstantStealCorner.Parent = InstantStealBtn
+
+InstantStealBtn.MouseButton1Click:Connect(function()
+    InstantStealActive = not InstantStealActive
+    if InstantStealActive then
+        InstantStealBtn.Text = "⚡ Instant Steal: ON"
+        InstantStealBtn.BackgroundColor3 = Color3.fromRGB(40, 150, 40)
+    else
+        InstantStealBtn.Text = "⚡ Instant Steal: OFF"
+        InstantStealBtn.BackgroundColor3 = Color3.fromRGB(150, 40, 40)
+    end
+end)
+
+-- THE ONE TELEPORT BUTTON
+OneButtonTP.Parent = MainFrame
+OneButtonTP.Size = UDim2.new(0, 160, 0, 45)
+OneButtonTP.Position = UDim2.new(0, 10, 0, 145)
+OneButtonTP.BackgroundColor3 = Color3.fromRGB(120, 80, 200)
+OneButtonTP.Text = "📍 Tap to Set Base Location"
+OneButtonTP.TextColor3 = Color3.fromRGB(255, 255, 255)
+OneButtonTP.Font = Enum.Font.SourceSansBold
+OneButtonTP.TextSize = 13
+
+TPCorner.CornerRadius = UDim.new(0, 8)
+TPCorner.Parent = OneButtonTP
+
+OneButtonTP.MouseButton1Click:Connect(function()
+    local hrp = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then
+        if _G.SavedLocation == nil then
+            _G.SavedLocation = hrp.CFrame
+            OneButtonTP.BackgroundColor3 = Color3.fromRGB(40, 120, 220)
+            OneButtonTP.Text = "🏠 Base Set (Notif-TP Active)"
+        else
+            hrp.CFrame = _G.SavedLocation
+        end
+    end
+end)
+
+-- CLOSE HUB CLEANLY
+ClearBtn.Parent = MainFrame
+ClearBtn.Size = UDim2.new(0, 160, 0, 35)
+ClearBtn.Position = UDim2.new(0, 10, 0, 235)
+ClearBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+ClearBtn.Text = "❌ Close Menu"
+ClearBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ClearBtn.Font = Enum.Font.SourceSansBold
+
+ClearCorner.CornerRadius = UDim.new(0, 8)
+ClearCorner.Parent = ClearBtn
+
+ClearBtn.MouseButton1Click:Connect(function()
+    _G.CurrentSpeed = 16
+    _G.SavedLocation = nil
+    InstantStealActive = false
+    pcall(function() game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16 end)
+    ScreenGui:Destroy()
+end)
+
+-- Instant Steal Logic Loop Engine
+task.spawn(function()
+    while true do
+        if InstantStealActive then
+            pcall(function()
+                for _, prompt in pairs(workspace:GetDescendants()) do
+                    if prompt:IsA("ProximityPrompt") then
+                        prompt.HoldDuration = 0
+                        
+                        local parentObj = prompt.Parent
+                        if parentObj and (parentObj.Name:lower():match("egg") or parentObj.Name:lower():match("guardian")) then
+                            prompt:InputHoldBegin()
+                            task.wait()
+                            prompt:InputHoldEnd()
+                        end
+                    end
+                end
+            end)
+        end
+        task.wait(0.1)
+    end
+end)
+
+-- Always-on Infinite Jump Framework
+task.spawn(function()
+    game:GetService("UserInputService").JumpRequest:Connect(function()
+        pcall(function()
+            local player = game.Players.LocalPlayer
+            if player.Character and player.Character:FindFirstChild("Humanoid") then
+                player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+        end)
+    end)
+end)
